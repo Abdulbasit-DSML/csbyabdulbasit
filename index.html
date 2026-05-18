@@ -5,8 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS by Abdulbasit</title>
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Floating Register Strip with Custom Gradient */
+        .sticky-register-strip {
+            position: fixed;
+            right: 0;
+            top: 25%; /* Positions it 25% down from the top of the screen */
+            transform: translateY(-25%);
+            
+            /* Modern Gradient Background going from Left to Right */
+            background: linear-gradient(to right, #2980b2, #e6026f);
+            
+            color: #ffffff; /* White text */
+            padding: 14px 28px; /* Creates the horizontal rectangle shape */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-transform: uppercase;
+            
+            /* Clean edge on the right, smooth curve on the left stretching out */
+            border-radius: 6px 0 0 6px; 
+            
+            box-shadow: -4px 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 9999; /* Ensures it stays above all other page elements */
+            transition: all 0.4s ease; /* Smooth transition for hover effects */
+        }
+
+        /* Interactive Hover Effect */
+        .sticky-register-strip:hover {
+            /* Flips the gradient direction on hover for a subtle glowing shift */
+            background: linear-gradient(to right, #e6026f, #2980b2); 
+            
+            padding-left: 42px; /* Stretches the strip further to the left when hovered */
+            box-shadow: -6px 6px 20px rgba(0, 0, 0, 0.25);
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Floating Register Now Strip connected to your Google Form -->
+    <a href="https://forms.gle/vdHhHdok6STAop1UA" target="_blank" class="sticky-register-strip">Register Now</a>
 
    <nav class="navbar">
         <div class="logo-container">
@@ -34,6 +74,7 @@
                     <a href="https://www.instagram.com/csbyabdulbasit?igsh=MWlsNWs1MmRtcjBvcQ==" target="_blank" class="btn social-ig">Instagram</a>
                 </div>
 
+                
 <div class="feature-container">                   
   <div class="feature-grid">
 
