@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PseudoCode IDE — CsbyAbdulbasit | IGCSE O-Level CS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stylepseudocode.css">
+<style>
+          /* ==========================================================================
+           Floating Register Strip - Desktop & Default View
+           ========================================================================== */
+        .sticky-register-strip {
+            position: fixed;
+            right: 0;
+            top: 25%; /* Positions it 25% down from the top of the screen */
+            transform: translateY(-25%);
+            
+            /* Modern Gradient Background going from Left to Right */
+            background: linear-gradient(to right, #2980b2, #e70170);
+            
+            color: #ffffff;
+            padding: 14px 28px; /* Standard wide size for desktops */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 14px;
+            
+            /* Clean edge on the right, smooth curve on the left stretching out */
+            border-radius: 6px 0 0 6px; 
+            
+            box-shadow: -4px 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 9999; /* Ensures it stays above all other page elements */
+            transition: all 0.4s ease; /* Smooth transition for hover/opacity changes */
+</style>
+</head>
+<body>
+ <!-- Floating Register Now Strip connected to your Google Form -->
+    <a href="https://forms.gle/vdHhHdok6STAop1UA" target="_blank" class="sticky-register-strip">Register Now <br> O/N 26|M/J 27 
+      </a>
+<!-- TOP NAV BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <span class="logo-bracket">&lt;</span>
+      <span class="logo-text">CS by Abdulbasit PseudoIDE</span>
+      <span class="logo-bracket">/&gt;</span>
+    </div>
+    <span class="subtitle">IGCSE 0478 · O-Level 2210</span>
+  </div>
+  <div class="topbar-center">
+    <div class="file-tab active">
+      <span class="tab-icon"></span>
+      <span>main.pseudo</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-secondary" id="btn-theme" title="Toggle Theme">🌙</button>
+    <button class="btn btn-secondary" id="btn-reference" title="Quick Reference">📖 Reference</button>
+    <button class="btn btn-secondary" id="btn-tests" title="Test Questions">🧪 Tests</button>
+    <button class="btn btn-secondary" id="btn-clear">🗑 Clear</button>
+    <button class="btn btn-run" id="btn-run">▶ RUN</button>
+  </div>
+</header>
+
+<!-- EXAMPLES TOOLBAR -->
+<div class="examples-bar">
+  <span class="examples-label">📦 Examples:</span>
+  <div class="examples-chips">
+    <button class="chip" data-ex="hello">Hello World</button>
+    <button class="chip" data-ex="variables">Variables & Types</button>
+    <button class="chip" data-ex="ifelse">IF / ELSE</button>
+    <button class="chip" data-ex="casef">CASE Statement</button>
+    <button class="chip" data-ex="forloop">FOR Loop</button>
+    <button class="chip" data-ex="whileloop">WHILE Loop</button>
+    <button class="chip" data-ex="repeatloop">REPEAT UNTIL</button>
+    <button class="chip" data-ex="array1d">1D Array</button>
+    <button class="chip" data-ex="array2d">2D Array</button>
+    <button class="chip" data-ex="bubblesort">Bubble Sort</button>
+    <button class="chip" data-ex="linearsearch">Linear Search</button>
+    <button class="chip" data-ex="strings">String Ops</button>
+    <button class="chip" data-ex="functions">Functions</button>
+    <button class="chip" data-ex="procedures">Procedures</button>
+    <button class="chip" data-ex="filehandling">File Handling</button>
+    <button class="chip" data-ex="totalling">Totalling/Avg/Max/Min</button>
+  </div>
+</div>
+
+<!-- MAIN WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT: EDITOR PANEL -->
+  <div class="editor-panel" id="editor-panel">
+    <div class="panel-header">
+      <span>✏️ Editor</span>
+      <div class="panel-actions">
+        <span id="cursor-pos" class="cursor-pos">Ln 1, Col 1</span>
+        <button class="icon-btn" id="btn-font-down" title="Decrease font">A-</button>
+        <button class="icon-btn" id="btn-font-up" title="Increase font">A+</button>
+      </div>
+    </div>
+    <div class="editor-wrap">
+      <div class="line-numbers" id="line-numbers"></div>
+      <div class="editor-inner">
+        <textarea id="editor"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          placeholder="// Start coding in pseudocode...&#10;// e.g.  OUTPUT &quot;Hello, World!&quot;"></textarea>
+        <!-- Autocomplete dropdown -->
+        <div class="autocomplete-panel" id="autocomplete-panel"></div>
+        <!-- Error underline overlay -->
+        <div class="error-overlay" id="error-overlay"></div>
+      </div>
+    </div>
+    <!-- Status bar under editor -->
+    <div class="editor-status">
+      <span id="status-errors" class="status-ok">✔ No errors</span>
+      <span class="status-sep">|</span>
+      <span id="status-lines">0 lines</span>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider" id="divider"></div>
+
+  <!-- RIGHT: OUTPUT + ERRORS -->
+  <div class="output-panel" id="output-panel">
+
+    <!-- TABS -->
+    <div class="out-tabs">
+      <button class="out-tab active" data-tab="console">🖥 Console</button>
+      <button class="out-tab" data-tab="errors">⚠️ Errors <span id="err-badge" class="err-badge hidden">0</span></button>
+      <button class="out-tab" data-tab="trace">🔍 Trace</button>
+    </div>
+
+    <!-- Console Output -->
+    <div class="out-content active" id="tab-console">
+      <div class="console-body" id="console-output">
+        <div class="console-welcome">
+          <div class="welcome-art">
+&gt; PseudoIDE v2.0
+&gt; IGCSE O-Level CS Compiler
+&gt; Ready. Press ▶ RUN to execute.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Panel -->
+    <div class="out-content" id="tab-errors">
+      <div class="errors-body" id="errors-body">
+        <div class="no-errors">✔ No errors detected</div>
+      </div>
+    </div>
+
+    <!-- Trace Panel -->
+    <div class="out-content" id="tab-trace">
+      <div class="trace-body" id="trace-body">
+        <div class="no-errors">Run code to see variable trace</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QUICK REFERENCE MODAL -->
+<div class="modal-overlay" id="modal-reference">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2>📖 Quick Reference — IGCSE Pseudocode Syntax</h2>
+      <button class="modal-close" id="close-reference">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="ref-grid">
+        <div class="ref-section">
+          <h3>📌 Variables & Constants</h3>
+          <pre>DECLARE Counter : INTEGER
+DECLARE Name : STRING
+DECLARE Price : REAL
+DECLARE Grade : CHAR
+DECLARE Done : BOOLEAN
+CONSTANT Pi ← 3.14159</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Assignment & I/O</h3>
+          <pre>Counter ← 0
+Counter ← Counter + 1
+INPUT Name
+OUTPUT "Hello, ", Name
+OUTPUT "Value: ", Counter</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Arithmetic Operators</h3>
+          <pre>+   Addition
+-   Subtraction
+*   Multiplication
+/   Division
+^   Power (e.g. X ^ 2)
+MOD(10, 3)   → 1
+DIV(10, 3)   → 3</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Relational & Boolean</h3>
+          <pre>=   Equal to
+&lt;&gt;  Not equal to
+&lt;   Less than
+&lt;=  Less than or equal
+&gt;   Greater than
+&gt;=  Greater or equal
+AND  OR  NOT</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 IF Statements</h3>
+          <pre>IF Score &gt; 50
+  THEN
+    OUTPUT "Pass"
+  ELSE
+    OUTPUT "Fail"
+ENDIF
+
+IF X &gt; 90
+  THEN
+    OUTPUT "A"
+  ELSEIF X &gt; 70
+    THEN
+      OUTPUT "B"
+  ELSE
+    OUTPUT "C"
+ENDIF</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 CASE Statement</h3>
+          <pre>CASE OF Grade
+  'A' : OUTPUT "Excellent"
+  'B' : OUTPUT "Good"
+  'C' : OUTPUT "Average"
+  OTHERWISE OUTPUT "Unknown"
+ENDCASE</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Loops</h3>
+          <pre>// FOR loop
+FOR i ← 1 TO 10
+    OUTPUT i
+NEXT i
+
+// WHILE loop
+WHILE Count &lt; 10 DO
+    Count ← Count + 1
+ENDWHILE
+
+// REPEAT UNTIL
+REPEAT
+    INPUT Password
+UNTIL Password = "abc"</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Arrays</h3>
+          <pre>// 1D Array
+DECLARE Nums : ARRAY[1:5] OF INTEGER
+Nums[1] ← 42
+OUTPUT Nums[1]
+
+// 2D Array
+DECLARE Grid : ARRAY[1:3,1:3] OF INTEGER
+Grid[1,1] ← 99
+OUTPUT Grid[1,1]</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Functions & Procedures</h3>
+          <pre>FUNCTION Add(A:INTEGER, B:INTEGER) RETURNS INTEGER
+    RETURN A + B
+ENDFUNCTION
+
+OUTPUT Add(3, 4)
+
+PROCEDURE Greet(Name:STRING)
+    OUTPUT "Hello, ", Name
+ENDPROCEDURE
+
+CALL Greet("Ali")</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 String Built-ins</h3>
+          <pre>LENGTH("Hello")          → 5
+UCASE("hello")          → "HELLO"
+LCASE("HELLO")          → "hello"
+SUBSTRING("Hello",1,3)  → "Hel"</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 Math Built-ins</h3>
+          <pre>ROUND(3.756, 2)  → 3.76
+RANDOM()         → 0..1
+MOD(10, 3)       → 1
+DIV(10, 3)       → 3</pre>
+        </div>
+        <div class="ref-section">
+          <h3>📌 File Handling</h3>
+          <pre>OPENFILE "data.txt" FOR WRITE
+WRITEFILE "data.txt", MyVar
+CLOSEFILE "data.txt"
+
+OPENFILE "data.txt" FOR READ
+READFILE "data.txt", MyVar
+CLOSEFILE "data.txt"</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEST QUESTIONS MODAL -->
+<div class="modal-overlay" id="modal-tests">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2>🧪 Practice Test Questions</h2>
+      <button class="modal-close" id="close-tests">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tests-grid" id="tests-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="compiler.js"></script>
+</body>
+</html>
